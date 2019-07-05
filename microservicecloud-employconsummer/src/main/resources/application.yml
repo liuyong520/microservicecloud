@@ -1,0 +1,8 @@
+server:
+  port: 8111
+spring:
+  application:
+    name: EmployComsummer
+  devtools:
+    restart:
+      enabled: true

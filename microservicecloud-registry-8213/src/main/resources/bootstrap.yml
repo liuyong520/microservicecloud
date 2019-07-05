@@ -1,0 +1,20 @@
+
+spring:
+  application:
+    name: registry-8213
+
+eureka:
+  instance:
+    #euraka 服务器实例名称
+    hostname: registry8213
+  client:
+    #false表示不向注册中心注册自己
+    register-with-eureka: false
+    #false表示自己端就是注册中心，我的职责就是维护服务实例，并不需要去检索服务
+    fetch-registry: false
+    service-url:
+      #单机配置 http://${eureka.instance.hostname}:${server.port}/eureka
+      #集群环境搭建
+      defaultZone: http://registry8211:8211/eureka/,http://registry8212:8212/eureka/
+server:
+  port: 8213

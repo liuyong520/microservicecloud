@@ -3,7 +3,10 @@ package com.styz.microservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * <b>package:com.com.styz.com.com.styz.com.styz.com.styz.com.styz.microservice</b>
@@ -18,8 +21,13 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 //注意EnableFeignClients 一定要扫描到@FeignClient的包否则会报错
 @EnableFeignClients(basePackages = "com.styz.microservicecloud.service")
-public class EmployComsumerApplication {
+//添加熔断机制
+@EnableHystrix
+@ComponentScan("com.styz")
+//添加服务监控 1.服务端要添加对应的包spring-boot-starter-actuator
+@EnableHystrixDashboard
+public class EmployComsumerDashboardApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EmployComsumerApplication.class,args);
+        SpringApplication.run(EmployComsumerDashboardApplication.class,args);
     }
 }

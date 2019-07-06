@@ -1,8 +1,8 @@
 server:
-  port: 7112
+  port: 7113
 spring:
   application:
-    name: EmployComsummer-HystrixDashboard
+    name: EmployComsummer-HystrixDashboard-Turbine
   devtools:
     restart:
       enabled: true

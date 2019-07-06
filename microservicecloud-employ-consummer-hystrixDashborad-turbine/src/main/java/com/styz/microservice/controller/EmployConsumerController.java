@@ -20,7 +20,7 @@ import java.util.List;
  * If you want to change the file header,please modify zhe File and Code Templates.
  */
 @RestController
-@RequestMapping("/comsummer")
+    @RequestMapping("/comsummer")
 public class EmployConsumerController {
     @Autowired
     private EmployClientService clientService;

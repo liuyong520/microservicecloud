@@ -1,5 +1,5 @@
 # microservicecloud
-Microservice based on Springcloud，follwer me to build a microservice instance step by step 
+Microservice based on Springcloud，follwer me to build a com.styz.microservice instance step by step 
 
 # 插件推荐
 在搭建项目之前先推荐两款很好用的IDEA插件，至于插件做什么用的,自己百度吧！
@@ -309,7 +309,7 @@ spring:
     restart:
       enabled: true
 ```
-3.新建config配置类com.styz.microservice.config.ConsummerConfigBean
+3.新建config配置类com.styz.com.styz.microservice.config.ConsummerConfigBean
 ```java
 @Configuration
 public class ConsummerConfigBean {
@@ -323,7 +323,7 @@ public class ConsummerConfigBean {
     }
 } 
 ```
-4.创建消费者controller com.styz.microservice.controller.EmployConsumerController
+4.创建消费者controller com.styz.com.styz.microservice.controller.EmployConsumerController
 ```java
 @RestController
 @RequestMapping("/comsummer")
@@ -343,7 +343,7 @@ public class EmployConsumerController {
     }
 }
 ```
-5.新建消费者启动类：com.styz.microservice.EmployComsumerApplication
+5.新建消费者启动类：com.styz.com.styz.microservice.EmployComsumerApplication
 ```java
 @SpringBootApplication
 public class EmployComsumerApplication {
@@ -397,7 +397,7 @@ Eureka主要的功能就是服务注册与发现。是Netflix公司下开源一�
         </plugins>
     </build>
 ```
-2.创建com.styz.microservice.RegistryApplication_8211 启动类
+2.创建com.styz.com.styz.microservice.RegistryApplication_8211 启动类
 ```java
 @SpringBootApplication
 @EnableEurekaServer
@@ -550,7 +550,7 @@ public class EmployServiceApplication {
 然后可以查看注册中心是否有服务注册进去了。
 
 # 消费者调用
-修改microservicecloud-employconsummer中的com.styz.microservice.controller.EmployConsumerController
+修改microservicecloud-employconsummer中的com.styz.com.styz.microservice.controller.EmployConsumerController
 中的
 ```java
 // EMPLOYSERVICE为服务名称
@@ -630,7 +630,7 @@ public class MyRules {
 }
 ```
 新建自定义负载均衡算法
-com.styz.microservice.robbin.CountRobbinRule
+com.styz.com.styz.microservice.robbin.CountRobbinRule
 ```java
 public class CountRobbinRule implements IRule {
     private ILoadBalancer loadBalancer;
@@ -663,7 +663,7 @@ public class CountRobbinRule implements IRule {
     }
 }
 ```
-修改配置文件类com.styz.microservice.config.ConsummerConfigBean
+修改配置文件类com.styz.com.styz.microservice.config.ConsummerConfigBean
 ```java
 @Configuration
 public class ConsummerConfigBean {
@@ -738,7 +738,7 @@ public interface EmployClientService {
 
 }
 ```
-修改com.styz.microservice.controller.EmployConsumerController
+修改com.styz.com.styz.microservice.controller.EmployConsumerController
 ```java
 @RestController
 @RequestMapping("/comsummer")
@@ -757,7 +757,7 @@ public class EmployConsumerController {
     }
 }
 ```
-修改启动类com.styz.microservice.EmployComsumerApplication
+修改启动类com.styz.com.styz.microservice.EmployComsumerApplication
 ```java
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -942,9 +942,276 @@ feign:
 启动消费者测试一下服务的熔断和降级看看。
 
 # 添加监控HystrixDashboard支持
-## hystrix.stream
-## turbon
+创建microservicecloud-employ-consummer-hystrixDashboard模块
+修改pom文件
+```xml
+<dependencies>
+        <dependency>
+            <groupId>com.com.styz.microservicecloud</groupId>
+            <artifactId>microservicecloud-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resource</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!--添加actor/info信息的描述-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <delimiters>
+                        <delimiter>$</delimiter>
+                    </delimiters>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+```
+修改启动类：
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+//注意EnableFeignClients 一定要扫描到@FeignClient的包否则会报错
+@EnableFeignClients(basePackages = "com.styz.microservicecloud.service")
+//添加熔断机制
+@EnableHystrix
+@ComponentScan("com.styz")
+//添加服务监控 1.服务端要添加对应的包spring-boot-starter-actuator
+@EnableHystrixDashboard
+public class EmployComsumerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EmployComsumerApplication.class,args);
+    }
+}
+```
+## hystrix.stream 
+springboot2.0中hystrix.stream url出现404错误问题解决办法1
+添加配置类com.styz.com.styz.microservice.config.HystrixConfig
+```java
+@Configuration
+public class HystrixConfig {
+    @Bean
+    public HystrixMetricsStreamServlet hystrixMetricsStreamServlet(){
+        return new HystrixMetricsStreamServlet();
+    }
+
+    @Bean
+    public ServletRegistrationBean registration(HystrixMetricsStreamServlet servlet){
+        ServletRegistrationBean registrationBean = new ServletRegistrationBean();
+        registrationBean.setServlet(servlet);
+        //是否启用该registrationBean
+        registrationBean.setEnabled(true);
+        registrationBean.addUrlMappings("/hystrix.stream");
+        return registrationBean;
+    }
+}
+```
+修改yml文件
+```yaml
+#需要暴露的url：
+#这里暴露了/actuator/hystrix.stream，/actuator/info
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - hystrix.stream
+          - info
+# 添加服务Info信息
+info:
+  app.name: ${eureka.instance.instance-id}
+  app.describution: 带熔断监控器的消费者
+  company.name: com.com.styz
+  author.name: liuy
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+```
+访问 http://localhost:7112/hystrix 页面，出现豪猪图片表示成功
+访问 http://localhost:7112/hystrix/hystrix.stream 出现ping 字眼表示成功
+http://localhost:7112/hystrix 这个页面如何使用，请自行百度吧。
+
+前面使用的/hystrix.stream端点监控单个微服务。然而在使用微服务架构的应用系统一般会包含多个微服务，每个微服务通常都会部署多个实例。如果每次只能查看单个实例的监控数据，就必须在Hystrix Dashboard上切换想要监控的地址，这显然很不方便。
+
+## Turbine简介
+Turbine是一个聚合Hystrix监控数据的工具，它可将所有相关/hystrix.stream端点的数据聚合到一个组合的/turbine.stream中，从而让集群的监控更加方便
+## 使用Turbine监控多个微服务
+创建microservicecloud-employ-consummer-hystrixDashborad-turbine
+修改pom文件
+```xml
+<!--添加Turbine依赖-->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-turbine</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-netflix-turbine</artifactId>
+</dependency>
+```
+修改启动类添加@EnableTurbine注解
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+//注意EnableFeignClients 一定要扫描到@FeignClient的包否则会报错
+@EnableFeignClients(basePackages = "com.styz.microservicecloud.service")
+//添加熔断机制
+@EnableHystrix
+@ComponentScan("com.styz")
+//添加服务监控 1.服务端要添加对应的包spring-boot-starter-actuator
+@EnableHystrixDashboard
+@EnableTurbine
+public class EmployConsummerTurbineApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EmployConsummerTurbineApplication.class,args);
+    }
+}
+```
+添加turbine配置
+```yml
+turbine:
+  # app-config表示待监测的服务名称
+  app-config: EmployComsummer-HystrixDashboard,EmployComsummer-HystrixDashboard-Turbine
+  aggregator:
+    cluster-config: default
+  cluster-name-expression: new String("default")
+```
+turbine.appConfig ：配置Eureka中的serviceId列表，表明监控哪些服务
+turbine.aggregator.clusterConfig ：指定聚合哪些集群，多个使用","分割，默认为default。可使用http://.../turbine.stream?cluster={clusterConfig之一}访问
+turbine.clusterNameExpression ： 
+1. clusterNameExpression指定集群名称，默认表达式appName；此时：turbine.aggregator.clusterConfig需要配置想要监控的应用名称；
+2. 当clusterNameExpression: default时，turbine.aggregator.clusterConfig可以不写，因为默认就是default；
+3. 当clusterNameExpression: metadata['cluster']时，假设想要监控的应用配置了eureka.instance.metadata-map.cluster: ABC，则需要配置，同时turbine.aggregator.clusterConfig: ABC
+## 测试
+启动microservicecloud-employ-consummer-hystrixDashboard 和microservicecloud-employ-consummer-hystrixDashborad-turbine
+访问http://localhost:7113/hystrix，监控http://localhost:7113/turbine.stream 后然后分别访问
+http://localhost:7112/comsummer/getById/1 和http://localhost:7113/comsummer/getById/1
+查看监控面板的变化。
 
 # 添加网关Zuul支持
+创建microservicecloud-gateway-zuul
+修改pom文件
+```xml
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+        </dependency>
+    </dependencies>
+```
+配置：
+```yaml
+eureka:
+  client:
+    service-url:
+      #单机配置：http://localhost:8211/eureka
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    instance-id: GateWay
+    prefer-ip-address: true
+zuul:
+  ignoredServices: '*'
+  host:
+    connect-timeout-millis: 20000
+    socket-timeout-millis: 20000
+
+  routes:
+    employservice:
+      path: /employ/**
+      serviceId: employservice
+      stripPrefix: false
+      sensitiveHeaders:
+
+    employcomsummer-hystrix:
+      path: /consummer/**
+      serviceId: employcomsummer-hystrix
+      stripPrefix: false
+      sensitiveHeaders:
+
+    employcomsummer-hystrixdashboard:
+      path: /dashboard/**
+      serviceId: employcomsummer-hystrixdashboard
+      stripPrefix: false
+      sensitiveHeaders:
+
+    baidu:
+      path: /baidu/**
+      url: http://www.baidu.com/
+```
+启动类添加
+```java
+@SpringBootApplication
+@EnableZuulProxy
+@EnableDiscoveryClient
+public class GatewayApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class,args);
+    }
+}
+```
 
 # 添加配置服务Config支持

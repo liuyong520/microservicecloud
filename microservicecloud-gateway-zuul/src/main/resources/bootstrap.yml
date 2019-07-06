@@ -1,3 +1,13 @@
+eureka:
+  client:
+    service-url:
+      #单机配置：http://localhost:8211/eureka
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    instance-id: GateWay
+    prefer-ip-address: true
 zuul:
   ignoredServices: '*'
   host:
@@ -7,6 +17,23 @@ zuul:
   routes:
     employservice:
       path: /employ/**
-      url: http://employservice:7112
+      serviceId: employservice
       stripPrefix: false
       sensitiveHeaders:
+
+    employcomsummer-hystrix:
+      path: /consummer/**
+      serviceId: employcomsummer-hystrix
+      stripPrefix: false
+      sensitiveHeaders:
+
+    employcomsummer-hystrixdashboard:
+      path: /dashboard/**
+      serviceId: employcomsummer-hystrixdashboard
+      stripPrefix: false
+      sensitiveHeaders:
+
+    baidu:
+      path: /baidu/**
+      url: http://www.baidu.com/
+

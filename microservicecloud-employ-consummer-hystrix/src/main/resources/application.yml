@@ -2,7 +2,7 @@ server:
   port: 7111
 spring:
   application:
-    name: EmployComsummer
+    name: EmployComsummer-Hystrix
   devtools:
     restart:
       enabled: true

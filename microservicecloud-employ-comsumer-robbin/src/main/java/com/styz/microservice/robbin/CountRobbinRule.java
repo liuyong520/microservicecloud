@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <b>package:com.com.styz.com.styz.com.styz.microservice.robbin</b>
+ * <b>package:com.com.styz.com.styz.com.styz.com.styz.microservice.robbin</b>
  * <b>project(项目):microservicecloud</b>
  * <b>class(类)${CLASS_NAME}</b>
  * <b>creat date(创建时间):2019-07-05 14:39</b>

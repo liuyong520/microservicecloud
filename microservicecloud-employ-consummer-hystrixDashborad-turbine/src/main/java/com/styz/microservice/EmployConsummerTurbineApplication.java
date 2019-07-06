@@ -3,14 +3,14 @@ package com.styz.microservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
+import org.springframework.cloud.netflix.turbine.EnableTurbine;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * <b>package:com.com.styz.com.com.styz.com.styz.com.styz.microservice</b>
+ * <b>package:com.com.styz.com.com.styz.com.styz.com.styz.com.styz.microservice</b>
  * <b>project(项目):microservicecloud</b>
  * <b>class(类)${CLASS_NAME}</b>
  * <b>creat date(创建时间):2019-07-04 20:26</b>
@@ -27,8 +27,9 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("com.styz")
 //添加服务监控 1.服务端要添加对应的包spring-boot-starter-actuator
 @EnableHystrixDashboard
-public class EmployComsumerApplication {
+@EnableTurbine
+public class EmployConsummerTurbineApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EmployComsumerApplication.class,args);
+        SpringApplication.run(EmployConsummerTurbineApplication.class,args);
     }
 }

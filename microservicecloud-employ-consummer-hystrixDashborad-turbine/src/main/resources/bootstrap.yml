@@ -1,0 +1,40 @@
+eureka:
+  client:
+    service-url:
+      #单机配置：http://localhost:8211/eureka
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  # 修改注册服务的名字
+  instance:
+    instance-id: EmployConsumer-hystrixDashboard
+    # 防问路径可以显示IP地址
+    prefer-ip-address: true
+
+feign:
+  hystrix:
+    enabled: true
+#需要暴露的url：
+#这里暴露了/actuator/hystrix.stream，/actuator/info
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - hystrix.stream
+          - info
+# 添加服务Info信息
+info:
+  app.name: ${eureka.instance.instance-id}
+  app.describution: 带熔断监控器的消费者
+  company.name: com.com.styz
+  author.name: liuy
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+#需要现开启EmployComsummer-HystrixDashboard服务
+#EmployComsummer-HystrixDashboard-Turbine就是自己
+turbine:
+  app-config: EmployComsummer-HystrixDashboard,EmployComsummer-HystrixDashboard-Turbine
+  aggregator:
+    cluster-config: default
+  cluster-name-expression: new String("default")

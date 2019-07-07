@@ -1215,3 +1215,179 @@ public class GatewayApplication {
 ```
 
 # 添加配置服务Config支持
+## 新建microservicecloud-config模块
+修改pom文件
+```xml
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+```
+创建com.styz.microservicecloud.ConfigServerApplication
+```java
+@SpringBootApplication
+@EnableConfigServer
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class,args);
+    }
+}
+```
+修改配置文件
+```yaml
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+#  本地模式
+  profiles:
+    active: native
+
+server:
+  port: 8888
+```
+此配置意思是config配置服务器扫描服务所在的config目录。将config目录下
+的配置文件发不成restful接口。
+
+启动com.styz.microservicecloud.ConfigServerApplication 然后
+访问http://localhost:8888/config/dev 就能访问到application-dev.yml配置。
+访问http://localhost:8888/employservice/default 就能访问到employsevice配置。
+## 改造一下microservicecloud-employ-provider-8911 让其加载config服务器上的配置
+1.删除原来的application.yml
+2.添加依赖spring-cloud-starter-config 其实原来就有。
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+3.修改bootstrap.yml 添加如下内容
+```yaml
+spring:
+  application:
+    name: EmployService
+  cloud:
+    config:
+      uri: http://config:8888
+      fail-fast: true
+```
+spring.cloud.config.url 配置的就是配置服务的地址。
+
+重启服务端microservicecloud-employ-provider-8911 测试一下是否正常
+
+采用spring.cloud.config.url 这种方式指定url的方式直接连接，有明显缺陷，
+当配置服务器挂掉，无法加载远程配置。就有了将config服务器服务化，注册到
+Eureka，利用服务发现的方式去找服务的地址，从而实现config地址动态变化，尽管
+config服务器发生变化，服务端也无需在修改对应的url。同时config配置服务器可以做
+集群注册到Eureka，从而也可避免单点故障。
+
+# 配置中心config把配置放置到git仓库
+之前配置放在本地了，现在将配置迁移到git仓库，好处是config服务做集群的时候可以统一从仓库拉取配置，
+自己不需要维护配置文件。
+## 创建存放配置的git目录 
+在microservicecloud文件夹下创建microservicecloud-config-dir目录
+将配置文件放入此文件，提交github。
+
+## 新建microservicecloud-config-git 模块
+1.修改pom文件
+```xml
+<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+        </dependency>
+    </dependencies>
+```
+2.新建类com.styz.microservicecloud.GItConfigServerApplication
+```java
+@EnableConfigServer
+public class GItConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GItConfigServerApplication.class,args);
+    }
+}
+```
+3.修改yml
+```yaml
+
+spring:
+  application:
+    name: GitConfigServer
+  cloud:
+    config:
+      # label 表示是哪个分支
+      label: master
+      server:
+        git:
+          # git用户密码私有仓库必填
+          username:
+          password:
+          # uri 是git的地址
+          uri: https://github.com/liuyong520/microservicecloud
+          # search-paths 搜索git仓库哪个目录，相对地址
+          search-paths: microservicecloud-config-dir
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+  instance:
+    instance-id: GitConfigServer
+    prefer-ip-address: true
+
+server:
+  port: 8888
+
+```
+server端就此改造完了
+
+测试一下
+访问http://localhost:8888/config/dev 就能访问到application-dev.yml配置。
+访问http://localhost:8888/employservice/default 就能访问到employsevice配置。
+
+## 修改microservicecloud-employ-provider-8911
+采用服务发现的方式连接configsever。
+```yaml
+spring:
+  application:
+    name: EmployService
+  cloud:
+    config:
+      name: EmployService  #指定配置文件名称
+      profile: default
+      label: master
+      discovery:
+        enabled: true
+        service-id: GitConfigServer #configserver服务
+```
+重启服务端看看是否正常启动。
+

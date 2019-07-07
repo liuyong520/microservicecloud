@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: prod
+server:
+  port: 12345

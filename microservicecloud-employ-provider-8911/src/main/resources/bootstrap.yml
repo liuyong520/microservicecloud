@@ -1,6 +1,26 @@
+#spring:
+#  application:
+#    name: EmployService
+#  cloud:
+#    config:
+#      #uri直接连接方式
+#      uri: http://config:8888
+#      fail-fast: true
+##      password: ${CONFIG_SERVICE_PASSWORD}
+##      username: user
+
 spring:
   application:
     name: EmployService
+  cloud:
+    config:
+      name: EmployService  #指定配置文件名称
+      profile: default
+      label: master
+      discovery:
+        enabled: true
+        service-id: GitConfigServer #configserver服务
+
 eureka:
   client:
     service-url:

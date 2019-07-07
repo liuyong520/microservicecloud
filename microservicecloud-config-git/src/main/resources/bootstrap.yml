@@ -1,0 +1,33 @@
+
+spring:
+  application:
+    name: GitConfigServer
+  cloud:
+    config:
+      label: master
+      server:
+        git:
+          username:
+          password:
+          uri: https://github.com/liuyong520/microservicecloud
+          search-paths: microservicecloud-config-dir
+
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+  instance:
+    instance-id: GitConfigServer
+    prefer-ip-address: true
+
+info:
+  app.name: ${eureka.instance.instance-id}
+  app.describution: git config 配置服务
+  company.name: com.com.styz
+  author.name: liuy
+  build.artifactId: $project.artifactId$
+  build.version: $project.version$
+
+server:
+  port: 8888

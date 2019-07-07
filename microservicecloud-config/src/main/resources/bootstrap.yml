@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+#  本地模式
+  profiles:
+    active: native
+#  security:
+#    user:
+#      password: ${CONFIG_SERVICE_PASSWORD}
+
+server:
+  port: 8888

@@ -20,6 +20,8 @@
         <module>microservicecloud-employ-consummer-hystrixDashboard</module>
         <module>microservicecloud-gateway-zuul</module>
         <module>microservicecloud-employ-consummer-hystrixDashborad-turbine</module>
+        <module>microservicecloud-config-git</module>
+        <module>microservicecloud-config</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

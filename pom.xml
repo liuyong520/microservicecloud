@@ -22,6 +22,8 @@
         <module>microservicecloud-employ-consummer-hystrixDashborad-turbine</module>
         <module>microservicecloud-config-git</module>
         <module>microservicecloud-config</module>
+        <module>microservicecloud-employ-provider-8911-sleuth</module>
+        <module>microservicecloud-employ-consummer-hystrix-sleuth</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

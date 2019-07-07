@@ -1,0 +1,16 @@
+server:
+  port: 7115
+spring:
+  application:
+    name: EmployComsummer-Hystrix
+  devtools:
+    restart:
+      enabled: true
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://k8s-n3:9411/

@@ -1,5 +1,48 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [microservicecloud](#microservicecloud)
+- [插件推荐](#%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90)
+- [建立父工程Microservicecloud](#%E5%BB%BA%E7%AB%8B%E7%88%B6%E5%B7%A5%E7%A8%8Bmicroservicecloud)
+  - [搭建Employ员工服务](#%E6%90%AD%E5%BB%BAemploy%E5%91%98%E5%B7%A5%E6%9C%8D%E5%8A%A1)
+    - [创建数据库](#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93)
+  - [创建消费者服务microservicecloud-employconsummer](#%E5%88%9B%E5%BB%BA%E6%B6%88%E8%B4%B9%E8%80%85%E6%9C%8D%E5%8A%A1microservicecloud-employconsummer)
+- [Eureka注册中心搭建](#eureka%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E6%90%AD%E5%BB%BA)
+- [单机模式](#%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F)
+  - [创建microservicecloud-registry-8211 模块](#%E5%88%9B%E5%BB%BAmicroservicecloud-registry-8211-%E6%A8%A1%E5%9D%97)
+- [集群搭建](#%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA)
+  - [修改microservicecloud-registry-8211 模块](#%E4%BF%AE%E6%94%B9microservicecloud-registry-8211-%E6%A8%A1%E5%9D%97)
+  - [拷贝microservicecloud-registry-8211 两份](#%E6%8B%B7%E8%B4%9Dmicroservicecloud-registry-8211-%E4%B8%A4%E4%BB%BD)
+- [注册服务到注册中心](#%E6%B3%A8%E5%86%8C%E6%9C%8D%E5%8A%A1%E5%88%B0%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83)
+  - [新建microservicecloud-employproviderwithregistry](#%E6%96%B0%E5%BB%BAmicroservicecloud-employproviderwithregistry)
+- [消费者调用](#%E6%B6%88%E8%B4%B9%E8%80%85%E8%B0%83%E7%94%A8)
+- [服务集群搭建](#%E6%9C%8D%E5%8A%A1%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA)
+  - [执行Employ-cluster.sql文件中的sql](#%E6%89%A7%E8%A1%8Cemploy-clustersql%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84sql)
+  - [拷贝microservicecloud-employproviderwithregistry 三份](#%E6%8B%B7%E8%B4%9Dmicroservicecloud-employproviderwithregistry-%E4%B8%89%E4%BB%BD)
+  - [创建microservicecloud-employ-comsumer-robbin 模块](#%E5%88%9B%E5%BB%BAmicroservicecloud-employ-comsumer-robbin-%E6%A8%A1%E5%9D%97)
+- [引入Feign负载均衡](#%E5%BC%95%E5%85%A5feign%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1)
+  - [创建microservicecloud-employ-consummer-feign模块](#%E5%88%9B%E5%BB%BAmicroservicecloud-employ-consummer-feign%E6%A8%A1%E5%9D%97)
+- [添加熔断Hystrix支持](#%E6%B7%BB%E5%8A%A0%E7%86%94%E6%96%ADhystrix%E6%94%AF%E6%8C%81)
+  - [新建microservicecloud-employ-consummer-hystrix 模块](#%E6%96%B0%E5%BB%BAmicroservicecloud-employ-consummer-hystrix-%E6%A8%A1%E5%9D%97)
+- [添加监控HystrixDashboard支持](#%E6%B7%BB%E5%8A%A0%E7%9B%91%E6%8E%A7hystrixdashboard%E6%94%AF%E6%8C%81)
+  - [hystrix.stream](#hystrixstream)
+  - [Turbine简介](#turbine%E7%AE%80%E4%BB%8B)
+  - [使用Turbine监控多个微服务](#%E4%BD%BF%E7%94%A8turbine%E7%9B%91%E6%8E%A7%E5%A4%9A%E4%B8%AA%E5%BE%AE%E6%9C%8D%E5%8A%A1)
+  - [测试](#%E6%B5%8B%E8%AF%95)
+- [添加网关Zuul支持](#%E6%B7%BB%E5%8A%A0%E7%BD%91%E5%85%B3zuul%E6%94%AF%E6%8C%81)
+- [添加配置服务Config支持](#%E6%B7%BB%E5%8A%A0%E9%85%8D%E7%BD%AE%E6%9C%8D%E5%8A%A1config%E6%94%AF%E6%8C%81)
+  - [新建microservicecloud-config模块](#%E6%96%B0%E5%BB%BAmicroservicecloud-config%E6%A8%A1%E5%9D%97)
+  - [改造一下microservicecloud-employ-provider-8911 让其加载config服务器上的配置](#%E6%94%B9%E9%80%A0%E4%B8%80%E4%B8%8Bmicroservicecloud-employ-provider-8911-%E8%AE%A9%E5%85%B6%E5%8A%A0%E8%BD%BDconfig%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E9%85%8D%E7%BD%AE)
+- [配置中心config把配置放置到git仓库](#%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83config%E6%8A%8A%E9%85%8D%E7%BD%AE%E6%94%BE%E7%BD%AE%E5%88%B0git%E4%BB%93%E5%BA%93)
+  - [创建存放配置的git目录](#%E5%88%9B%E5%BB%BA%E5%AD%98%E6%94%BE%E9%85%8D%E7%BD%AE%E7%9A%84git%E7%9B%AE%E5%BD%95)
+  - [新建microservicecloud-config-git 模块](#%E6%96%B0%E5%BB%BAmicroservicecloud-config-git-%E6%A8%A1%E5%9D%97)
+  - [修改microservicecloud-employ-provider-8911](#%E4%BF%AE%E6%94%B9microservicecloud-employ-provider-8911)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # microservicecloud
-Microservice based on Springcloud，follwer me to build a com.styz.microservice instance step by step 
+Microservice based on Springcloud，follwer me to build a com.styz.com.styz.microservice instance step by step 
 
 # 插件推荐
 在搭建项目之前先推荐两款很好用的IDEA插件，至于插件做什么用的,自己百度吧！
@@ -174,7 +217,7 @@ public class EmployServiceApplication {
     }
 }
 ```
-然后创建com.styz.microserivcecloud.service.EmployService接口以及其实现类
+然后创建com.styz.com.styz.microserivcecloud.service.EmployService接口以及其实现类
 ```java
 public interface EmployService {
     /**
@@ -206,7 +249,7 @@ public class EmployServiceImpl implements EmployService {
     }
 }
 ```
-然后创建com.styz.microserivcecloud.controller.EmployController
+然后创建com.styz.com.styz.microserivcecloud.controller.EmployController
 ```java
 @RestController
 @RequestMapping("/employ")
@@ -309,7 +352,7 @@ spring:
     restart:
       enabled: true
 ```
-3.新建config配置类com.styz.com.styz.microservice.config.ConsummerConfigBean
+3.新建config配置类com.styz.com.styz.com.styz.microservice.config.ConsummerConfigBean
 ```java
 @Configuration
 public class ConsummerConfigBean {
@@ -323,7 +366,7 @@ public class ConsummerConfigBean {
     }
 } 
 ```
-4.创建消费者controller com.styz.com.styz.microservice.controller.EmployConsumerController
+4.创建消费者controller com.styz.com.styz.com.styz.microservice.controller.EmployConsumerController
 ```java
 @RestController
 @RequestMapping("/comsummer")
@@ -343,7 +386,7 @@ public class EmployConsumerController {
     }
 }
 ```
-5.新建消费者启动类：com.styz.com.styz.microservice.EmployComsumerApplication
+5.新建消费者启动类：com.styz.com.styz.com.styz.microservice.EmployComsumerApplication
 ```java
 @SpringBootApplication
 public class EmployComsumerApplication {
@@ -397,7 +440,7 @@ Eureka主要的功能就是服务注册与发现。是Netflix公司下开源一�
         </plugins>
     </build>
 ```
-2.创建com.styz.com.styz.microservice.RegistryApplication_8211 启动类
+2.创建com.styz.com.styz.com.styz.microservice.RegistryApplication_8211 启动类
 ```java
 @SpringBootApplication
 @EnableEurekaServer
@@ -535,7 +578,7 @@ info:
   build.artifactId: $project.artifactId$
   build.version: $project.version$
 ```
-修改启动类com.styz.microserivcecloud.EmployServiceApplication
+修改启动类com.styz.com.styz.microserivcecloud.EmployServiceApplication
 添加@EnableEurekaClient注解
 ```java
 @SpringBootApplication
@@ -550,7 +593,7 @@ public class EmployServiceApplication {
 然后可以查看注册中心是否有服务注册进去了。
 
 # 消费者调用
-修改microservicecloud-employconsummer中的com.styz.com.styz.microservice.controller.EmployConsumerController
+修改microservicecloud-employconsummer中的com.styz.com.styz.com.styz.microservice.controller.EmployConsumerController
 中的
 ```java
 // EMPLOYSERVICE为服务名称
@@ -630,7 +673,7 @@ public class MyRules {
 }
 ```
 新建自定义负载均衡算法
-com.styz.com.styz.microservice.robbin.CountRobbinRule
+com.styz.com.styz.com.styz.microservice.robbin.CountRobbinRule
 ```java
 public class CountRobbinRule implements IRule {
     private ILoadBalancer loadBalancer;
@@ -663,7 +706,7 @@ public class CountRobbinRule implements IRule {
     }
 }
 ```
-修改配置文件类com.styz.com.styz.microservice.config.ConsummerConfigBean
+修改配置文件类com.styz.com.styz.com.styz.microservice.config.ConsummerConfigBean
 ```java
 @Configuration
 public class ConsummerConfigBean {
@@ -738,7 +781,7 @@ public interface EmployClientService {
 
 }
 ```
-修改com.styz.com.styz.microservice.controller.EmployConsumerController
+修改com.styz.com.styz.com.styz.microservice.controller.EmployConsumerController
 ```java
 @RestController
 @RequestMapping("/comsummer")
@@ -757,7 +800,7 @@ public class EmployConsumerController {
     }
 }
 ```
-修改启动类com.styz.com.styz.microservice.EmployComsumerApplication
+修改启动类com.styz.com.styz.com.styz.microservice.EmployComsumerApplication
 ```java
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -1033,7 +1076,7 @@ public class EmployComsumerApplication {
 ```
 ## hystrix.stream 
 springboot2.0中hystrix.stream url出现404错误问题解决办法1
-添加配置类com.styz.com.styz.microservice.config.HystrixConfig
+添加配置类com.styz.com.styz.com.styz.microservice.config.HystrixConfig
 ```java
 @Configuration
 public class HystrixConfig {
@@ -1390,4 +1433,96 @@ spring:
         service-id: GitConfigServer #configserver服务
 ```
 重启服务端看看是否正常启动。
+
+# 添加链路跟踪
+何谓链路跟踪?
+在分布式系统中往往一次简单的请求，往往涉及到一系列的服务调用，服务A调用服务B，服务B调用服务C。这样
+的服务链上如果某个服务发生故障，无法快速定外到故障点，从而无法快速定位问题。而链路
+跟踪是就是跟踪整个服务之间的调用链，监控每个服务间的调用情况，以备在调用出现问题时，能快速定位问题。
+## zipKin 简介
+Zipkin是一种分布式跟踪系统。它有助于收集解决服务体系结构中的延迟问题所需的计时数据。功能包括收集和查找此数据。
+
+如果日志文件中有跟踪ID，则可以直接跳转到该文件。否则，您可以根据服务，操作名称，标签和持续时间等属性进行查询。将为您总结一些有趣的数据，例如在服务中花费的时间百分比，以及操作是否失败
+Zipkin UI还提供了一个依赖关系图，显示了每个应用程序通过的跟踪请求数。这有助于识别聚合行为，包括错误路径或对已弃用服务的调用。
+
+## zipKin环境搭建
+1.docker环境下：
+```sbtshell
+docker run --name zipkin -d -p 9411:9411 openzipkin/zipkin
+```
+2.物理机
+```sbtshell
+curl -sSL https://zipkin.io/quickstart.sh | bash -s
+java -jar zipkin.jar
+```
+访问http://localhost:9411/ 出现zipkin UI界面
+为了 演示一下链路跟踪需要搭建一个调用链环境，我这里用一个消费端和服务端来演示
+## 服务端
+1.新建microservicecloud-employ-provider-8911-sleuth
+改造一下microservicecloud-employ-provider-8911
+修改pom
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zipkin</artifactId>
+</dependency>
+```
+修改yml文件
+```yaml
+spring:
+  application:
+    name: EmployService
+  #添加链路跟踪
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://k8s-n3:9411/
+```
+至此服务端改造完成
+
+## 消费者
+1.新建microservicecloud-employ-consummer-hystrix-sleuth模块
+改造一下microservicecloud-employ-consummer-hystrix
+修改pom文件
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zipkin</artifactId>
+</dependency>
+```
+然后修改一下yml文件
+```yaml
+server:
+  port: 7115
+spring:
+  application:
+    name: EmployComsummer-Hystrix
+  devtools:
+    restart:
+      enabled: true
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0 #采样比例 1表示100%全部采样
+  zipkin:
+    base-url: http://k8s-n3:9411/
+```
+消费端完成
+启动服务端和消费端，访问http://localhost:7115/consummer/getById/1 调用一下消费者，
+然后去http://localhost:9411/zipkin/ 查看一下链路跟踪情况。
+
 

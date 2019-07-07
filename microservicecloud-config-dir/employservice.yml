@@ -6,6 +6,7 @@ mybatis:
   mapper-locations:
     - classpath*:mapperxml/*Mapper.xml
 
+
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -19,5 +20,3 @@ spring:
       max-idle: 10
       max-total: 20
       max-wait-millis: 10
-
-

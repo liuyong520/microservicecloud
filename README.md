@@ -38,6 +38,11 @@
   - [创建存放配置的git目录](#%E5%88%9B%E5%BB%BA%E5%AD%98%E6%94%BE%E9%85%8D%E7%BD%AE%E7%9A%84git%E7%9B%AE%E5%BD%95)
   - [新建microservicecloud-config-git 模块](#%E6%96%B0%E5%BB%BAmicroservicecloud-config-git-%E6%A8%A1%E5%9D%97)
   - [修改microservicecloud-employ-provider-8911](#%E4%BF%AE%E6%94%B9microservicecloud-employ-provider-8911)
+- [添加链路跟踪](#%E6%B7%BB%E5%8A%A0%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA)
+  - [zipKin 简介](#zipkin-%E7%AE%80%E4%BB%8B)
+  - [zipKin环境搭建](#zipkin%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA)
+  - [服务端](#%E6%9C%8D%E5%8A%A1%E7%AB%AF)
+  - [消费者](#%E6%B6%88%E8%B4%B9%E8%80%85)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

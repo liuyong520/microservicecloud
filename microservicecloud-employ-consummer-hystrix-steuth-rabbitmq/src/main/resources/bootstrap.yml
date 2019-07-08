@@ -1,0 +1,11 @@
+eureka:
+  client:
+    service-url:
+      #单机配置：http://localhost:8211/eureka
+      defaultZone: http://registry8212:8212/eureka/,http://registry8213:8213/eureka/,http://registry8211:8211/eureka/
+    register-with-eureka: true
+  instance:
+    instance-id:  EmployComsummer-Sleuth-RabbitMq
+feign:
+  hystrix:
+    enabled: true

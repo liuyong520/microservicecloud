@@ -1,0 +1,24 @@
+server:
+  port: 7116
+spring:
+  application:
+    name: EmployComsummer-SleuthRabbitTest
+  devtools:
+    restart:
+      enabled: true
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  zipkin:
+#    base-url: http://k8s-n3:94111/
+    sender:
+      type: rabbit
+
+  rabbitmq:
+    host: k8s-n3
+    port: 5672
+    username: guest
+    password: guest

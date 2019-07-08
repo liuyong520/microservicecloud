@@ -1312,7 +1312,8 @@ server:
 启动com.styz.microservicecloud.ConfigServerApplication 然后
 访问http://localhost:8888/config/dev 就能访问到application-dev.yml配置。
 访问http://localhost:8888/employservice/default 就能访问到employsevice配置。
-## 改造一下microservicecloud-employ-provider-8911 让其加载config服务器上的配置
+## 修改服务提供者
+修改microservicecloud-employ-provider-8911 让其加载config服务器上的配置
 1.删除原来的application.yml
 2.添加依赖spring-cloud-starter-config 其实原来就有。
 ```xml
@@ -1462,7 +1463,7 @@ java -jar zipkin.jar
 ```
 访问http://localhost:9411/ 出现zipkin UI界面
 为了 演示一下链路跟踪需要搭建一个调用链环境，我这里用一个消费端和服务端来演示
-## 服务端
+## 修改服务提供者
 1.新建microservicecloud-employ-provider-8911-sleuth
 改造一下microservicecloud-employ-provider-8911
 修改pom
@@ -1493,7 +1494,7 @@ spring:
 ```
 至此服务端改造完成
 
-## 消费者
+## 修改消费者
 1.新建microservicecloud-employ-consummer-hystrix-sleuth模块
 改造一下microservicecloud-employ-consummer-hystrix
 修改pom文件
@@ -1530,4 +1531,58 @@ spring:
 启动服务端和消费端，访问http://localhost:7115/consummer/getById/1 调用一下消费者，
 然后去http://localhost:9411/zipkin/ 查看一下链路跟踪情况。
 
-
+简单说一下链路跟踪的原理：针对给个服务的调用，都进行来埋点，消息的发送时刻以及消息的接收，
+都会被记录，以及包括服务名称，方法名称都被埋点探针记录下来，每次调用链上有唯一的tracId，这个是
+全局唯一的，然后用spanId区分是调用链上的哪个服务的哪个方法。以上数据的采集是通过httpReport方式提交的
+这种方式优点是简单直接，缺点是 1.网络问题：导致数据采集丢失 2。给zipkin带上访问上的压力量大可以压蹦zipkin
+所以要改造一下：用消息队列进行解藕。就有了下面的sleuth+zipkin+rabbitmq方式，当然消息队列可以换成kafka也没有问题。
+# 链路跟踪之sleuth+zipKin+rabbitmq
+## rabbitMq环境搭建
+我这里用的是docker环境，所以直接贴出来docker下搭建过程。
+拉取官方镜像，镜像地址：https://hub.docker.com/_/rabbitmq/
+拉取镜像：docker pull rabbitmq，如需要管理界面：docker pull rabbitmq:management
+执行指令启动RabbitMQ
+无管理界面：
+```
+docker run --localhost rabbit-host --name my_rabbit -d -p 5672:5672 rabbitmq
+```
+有管理界面：
+```
+docker run --localhost rabbit-host --name my_rabbit -d -p 5672:5672 -p 15672:15672 rabbitmq:management
+```
+账号：guest 密码：guest
+## 调整之前的消费者和服务者
+修改pom文件
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+</dependency>
+```
+修改yml文件
+```yaml
+spring
+    sleuth:
+        web:
+          client:
+            enabled: true
+        sampler:
+          probability: 1.0
+      zipkin:
+        sender:
+          type: rabbit
+      rabbitmq:
+        password: guest
+        username: guest
+        host: k8s-n3
+        port: 5672
+        virtual-host: /
+```
+## 修改zipkin服务端
+```
+docker run -d -p9411:9411 -e "RABBIT_ADDRESSES=rabbithost:5672" openzipkin/zipkin
+```
+如果你的rabbitMq用户名密码不是guest需要指定环境变量。
+## 结果展示
+![enter description here](https://www.github.com/liuyong520/pic/raw/master/小书匠/1562553733317.png)
+![enter description here](https://www.github.com/liuyong520/pic/raw/master/小书匠/1562553940083.png)

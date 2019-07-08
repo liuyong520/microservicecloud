@@ -24,6 +24,8 @@
         <module>microservicecloud-config</module>
         <module>microservicecloud-employ-provider-8911-sleuth</module>
         <module>microservicecloud-employ-consummer-hystrix-sleuth</module>
+        <module>microservicecloud-employ-provider-sleuth-rabbitmq</module>
+        <module>microservicecloud-employ-consummer-hystrix-steuth-rabbitmq</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
